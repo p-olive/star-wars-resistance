@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   mongodb:
     image: mongo
@@ -6,5 +7,34 @@ services:
       - mongodata:/data/db
     ports:
       - "27017:27017"
+    networks:
+      - mynetwork
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - mynetwork
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+    - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
 volumes:
   mongodata:
+  prometheus_data:
+  grafana_data:
